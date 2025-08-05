@@ -58,7 +58,7 @@ local function fd_file_args(opts)
   if type(opts.depth) == "number" then
     table.insert(args, "--maxdepth")
     table.insert(args, opts.depth)
-  end
+  end  
   if hidden_opts(opts) then
     table.insert(args, "--hidden")
   end
