@@ -73,14 +73,7 @@ local function fd_file_args(opts)
   end
   return args
 end
-
-local function scandir_file_args(opts)
-  local args = {
-      add_dirs = opts.add_dirs,
-      depth = opts.depth,
-      hidden = hidden_opts(opts),
-      respect_gitignore = opts.respect_gitignore,
-    }
+  
 local function git_args()
   -- use dot here to also catch renames which also require the old filename
   -- to properly show it as a rename.
@@ -159,17 +152,12 @@ fb_finders.browse_folders = function(opts)
       cwd = cwd,
     }
   else
-    local scan_args = {
+    local data = scan.scan_dir(cwd, {
       hidden = hidden_opts(opts),
       only_dirs = true,
       respect_gitignore = opts.respect_gitignore,
-    }
-    
-    if type(opts.depth) == "number" then
-      scan_args.depth = opts.depth
-    end
-    
-    local data = scan.scan_dir(cwd, scan_args)
+      depth = opts.depth,
+    })
     table.insert(data, 1, cwd)
     return finders.new_table { results = data, entry_maker = entry_maker }
   end
