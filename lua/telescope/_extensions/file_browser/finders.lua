@@ -51,14 +51,14 @@ local function fd_file_args(opts)
       table.insert(args, "--type")
       table.insert(args, "directory")
     end
-    if type(opts.depth) == "number" then
-      table.insert(args, "--maxdepth")
-      table.insert(args, opts.depth)
-    end
   else
     args = { "--type", "directory", "--absolute-path" }
   end
 
+  if type(opts.depth) == "number" then
+    table.insert(args, "--maxdepth")
+    table.insert(args, opts.depth)
+  end
   if hidden_opts(opts) then
     table.insert(args, "--hidden")
   end
@@ -74,6 +74,13 @@ local function fd_file_args(opts)
   return args
 end
 
+local function scandir_file_args(opts)
+  local args = {
+      add_dirs = opts.add_dirs,
+      depth = opts.depth,
+      hidden = hidden_opts(opts),
+      respect_gitignore = opts.respect_gitignore,
+    }
 local function git_args()
   -- use dot here to also catch renames which also require the old filename
   -- to properly show it as a rename.
@@ -152,11 +159,17 @@ fb_finders.browse_folders = function(opts)
       cwd = cwd,
     }
   else
-    local data = scan.scan_dir(cwd, {
+    local scan_args = {
       hidden = hidden_opts(opts),
       only_dirs = true,
       respect_gitignore = opts.respect_gitignore,
-    })
+    }
+    
+    if type(opts.depth) == "number" then
+      scan_args.depth = opts.depth
+    end
+    
+    local data = scan.scan_dir(cwd, scan_args)
     table.insert(data, 1, cwd)
     return finders.new_table { results = data, entry_maker = entry_maker }
   end
