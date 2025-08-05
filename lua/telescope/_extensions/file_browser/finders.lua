@@ -73,7 +73,7 @@ local function fd_file_args(opts)
   end
   return args
 end
-  
+
 local function git_args()
   -- use dot here to also catch renames which also require the old filename
   -- to properly show it as a rename.
